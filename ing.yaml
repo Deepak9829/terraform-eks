@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: default
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: devops-lb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-path: /api/health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:ap-southeast-1:194428989522:certificate/21c1da74-ed6f-42ad-9fb0-fd73ac26f58e'
+
+spec:
+  ingressClassName: awesome-class
+  rules:
+    - host: grafana-me.tricogdev.net
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: my-grafana
+                port:
+                  number: 80
+            path: /
